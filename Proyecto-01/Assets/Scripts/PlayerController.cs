@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb; 
     private Collider2D col;
 
-    private int vidas = 3;
+    public int vidas = 5;
 
     // Animacion
     public Animator animator;
