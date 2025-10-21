@@ -6,14 +6,17 @@ using UnityEngine.Timeline;
 public class EnemyController : MonoBehaviour
 {
     public Transform player;
-    public float detectionRadius = 10.0f;
+    public float detectionRadius = 30.0f;
     public float speed = 5.0f;
+    public float vida = 3f;
 
-    private Rigidbody2D rb; 
-    private Vector2 Movement;
+    private Rigidbody2D rb;
+    private Animator animator;
 
-    void Start() {
+    void Start()
+    {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void FixedUpdate()
@@ -25,7 +28,7 @@ public class EnemyController : MonoBehaviour
             float directionX = player.position.x > transform.position.x ? 1f : -1f;
             rb.velocity = new Vector2(directionX * speed, rb.velocity.y);
 
-            // --- BONUS: mirar hacia el jugador ---
+            // Voltear sprite
             if (player.position.x > transform.position.x)
                 transform.localScale = new Vector3(-1, 1, 1);
             else
@@ -35,6 +38,8 @@ public class EnemyController : MonoBehaviour
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
         }
+
+        animator.SetFloat("Movement", Mathf.Abs(rb.velocity.x));
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -44,5 +49,22 @@ public class EnemyController : MonoBehaviour
             Vector2 direccionDamage = new Vector2(transform.position.x, 0);
             collision.gameObject.GetComponent<PlayerController>().onDamage(direccionDamage, 1);
         }
+    }
+
+        public void RecibirDamage(float damage)
+    {
+        vida -= damage;
+
+        if (vida <= 0)
+        {
+            Muerte();
+        }
+    }
+
+    void Muerte()
+    {
+        animator.SetTrigger("Death");
+
+        Destroy(gameObject, 0.5f);
     }
 }
